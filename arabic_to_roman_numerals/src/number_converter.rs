@@ -1,97 +1,86 @@
 use std::collections::HashMap;
 
 pub fn arabic_to_roman(number: i32) -> String {
-
     if number < 0 || number > 3999 {
         return "".to_string();
     }
 
-    let ones: HashMap<char, &str> = HashMap::from([
-        ('0', ""),
-        ('1', "I"),
-        ('2', "II"),
-        ('3', "III"),
-        ('4', "IV"),
-        ('5', "V"),
-        ('6', "VI"),
-        ('7', "VII"),
-        ('8', "VIII"),
-        ('9', "IX")
+    let ones: HashMap<i32, &str> = HashMap::from([
+        (0, ""),
+        (1, "I"),
+        (2, "II"),
+        (3, "III"),
+        (4, "IV"),
+        (5, "V"),
+        (6, "VI"),
+        (7, "VII"),
+        (8, "VIII"),
+        (9, "IX")
     ]);
-    
-    let tens: HashMap<char, &str> = HashMap::from([
-        ('0', ""),
-        ('1', "X"),
-        ('2', "XX"),
-        ('3', "XXX"),
-        ('4', "XL"),
-        ('5', "L"),
-        ('6', "LX"),
-        ('7', "LXX"),
-        ('8', "LXXX"),
-        ('9', "XC")
+    let tens: HashMap<i32, &str> = HashMap::from([
+        (0, ""),
+        (1, "X"),
+        (2, "XX"),
+        (3, "XXX"),
+        (4, "XL"),
+        (5, "L"),
+        (6, "LX"),
+        (7, "LXX"),
+        (8, "LXXX"),
+        (9, "XC")
     ]);
-    
-    let hundreds: HashMap<char, &str> = HashMap::from([
-        ('0', ""),
-        ('1', "C"),
-        ('2', "CC"),
-        ('3', "CCC"),
-        ('4', "CD"),
-        ('5', "D"),
-        ('6', "DC"),
-        ('7', "DCC"),
-        ('8', "DCCC"),
-        ('9', "CM")
+    let hundreds: HashMap<i32, &str> = HashMap::from([
+        (0, ""),
+        (1, "C"),
+        (2, "CC"),
+        (3, "CCC"),
+        (4, "CD"),
+        (5, "D"),
+        (6, "DC"),
+        (7, "DCC"),
+        (8, "DCCC"),
+        (9, "CM")
     ]);
-    
-    let thousands: HashMap<char, &str> = HashMap::from([
-        ('0', ""),
-        ('1', "M"),
-        ('2', "MM"),
-        ('3', "MMM"),
+    let thousands: HashMap<i32, &str> = HashMap::from([
+        (0, ""),
+        (1, "M"),
+        (2, "MM"),
+        (3, "MMM"),
     ]);
 
-    let mut roman: String = "".to_string();
-    for (i, char) in number.to_string().chars().rev().enumerate() {
-        match i {
-            0 => {
-                match ones.get(&char) {
-                    Some(numeral) => {
-                        roman += numeral;
-                    }
-                    _ => {}
-                }
-            }
-            1 => {
-                match tens.get(&char) {
-                    Some(numeral) => {
-                        roman += numeral;
-                    }
-                    _ => {}
-                }
-            }
-            2 => {
-                match hundreds.get(&char) {
-                    Some(numeral) => {
-                        roman += numeral;
-                    }
-                    _ => {}
-                }
-            }
-            3 => {
-                match thousands.get(&char) {
-                    Some(numeral) => {
-                        roman += numeral;
-                    }
-                    _ => {}
-                }
-            }
-            _ => {}
-        }
+    let mut roman = String::new();
+    let mut num = number;
+
+    //ones
+    let roman_ones = ones.get(&(num % 10)).unwrap();
+    num /= 10;
+
+    //tens
+    let mut roman_tens = "";
+    if number > 9 {
+        roman_tens = tens.get(&(num % 10)).unwrap();
+        num /= 10;
     }
-    println!("{}", roman);
-    return roman.chars().rev().collect::<String>();
+
+    //hundreds
+    let mut roman_hundreds = "";
+    if number > 99 {
+        roman_hundreds = hundreds.get(&(num % 10)).unwrap();
+        num /= 10;
+    }
+
+    //thousands
+    let mut roman_thousands = "";
+    if number > 999 {
+        roman_thousands = thousands.get(&(num % 10)).unwrap();
+    }
+
+    roman.push_str(roman_thousands);
+    roman.push_str(roman_hundreds);
+    roman.push_str(roman_tens);
+    roman.push_str(roman_ones);
+
+    return roman;
 }
 
 #[cfg(test)]
